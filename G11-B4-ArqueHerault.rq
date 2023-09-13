@@ -1,0 +1,69 @@
+## -----------------------------------------------------------------------------
+## -- SDM Project 3
+## -- Authors: Arnau Arqué and Nora Herault
+## -----------------------------------------------------------------------------
+## -- Queries of Section B.4
+## -----------------------------------------------------------------------------
+
+## -----------------------------------------------------------------------------
+## -- 1. Find all Authors
+## -----------------------------------------------------------------------------
+
+PREFIX class: <http://sdm/project/3/source/class#>
+PREFIX dtProp: <http://sdm/project/3/source/datatypeProperty#>
+SELECT ?author ?name
+WHERE {
+    ?author a class:Author;
+            dtprop:name ?name.
+}
+
+## -----------------------------------------------------------------------------
+## -- 2. Find all properties whose domain is Author
+## -----------------------------------------------------------------------------
+
+PREFIX class: <http://sdm/project/3/source/class#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?prop
+WHERE {
+    ?prop a owl:ObjectProperty;
+          rdfs:domain class:Author
+}
+
+## -----------------------------------------------------------------------------
+## -- 3. Find all properties whose domain is either Conference or Journal
+## -----------------------------------------------------------------------------
+
+PREFIX class: <http://sdm/project/3/source/class#>
+SELECT DISTINCT ?property
+WHERE {
+    ?instance ?property ?range;
+              a class:Venue
+}
+
+## -----------------------------------------------------------------------------
+## -- 4. Find all the papers written by a given author that where published 
+## -- in database conferences
+## -----------------------------------------------------------------------------
+## -- Modify Line 54 to change the given author. More specifically, you 
+## -- need to set the AuthorID (i.e. ind:AuthorID) of the author selected
+## -----------------------------------------------------------------------------
+
+SELECT ?paper ?paperTitle ?author ?authorName ?submission ?conf ?confHeading ?area ?field
+WHERE {
+    BIND(ind:11 AS ?author) # Modify to change the given Author 
+    BIND("Database" AS ?field) # Modify to change the field of the Area
+    BIND("Yes" AS ?published) # Modify to change the published status
+    ?paper a class:Paper;
+           objProp:hasAuthor ?author;
+           dtProp:title ?paperTitle.
+    ?author dtProp:name ?authorName.
+    ?submission a class:Submission;
+                objProp:hasPaper ?paper;
+                objProp:submittedTo ?conf;
+                dtProp:published ?published.
+    ?conf a class:Conference;
+          objProp:venueRelatedTo ?area;
+          dtProp:heading ?confHeading.
+    ?area dtProp:field ?field
+}

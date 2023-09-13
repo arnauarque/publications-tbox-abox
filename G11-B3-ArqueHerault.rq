@@ -1,0 +1,55 @@
+## -----------------------------------------------------------------------------
+## -- SDM Project 3
+## -- Authors: Arnau Arqué and Nora Herault
+## -----------------------------------------------------------------------------
+## -- Queries of Section B.3
+## -----------------------------------------------------------------------------
+
+## -----------------------------------------------------------------------------
+## -- 1. Number of classes
+## -----------------------------------------------------------------------------
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT (COUNT(?class) AS ?numberOfClasses)
+WHERE { 
+    ?class a owl:Class 
+}
+
+## -----------------------------------------------------------------------------
+## -- 2. Number of properties
+## -----------------------------------------------------------------------------
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX objProp: <http://sdm/project/3/source/objectProperty#>
+PREFIX dtProp: <http://sdm/project/3/source/datatypeProperty#>
+SELECT (COUNT(?property) AS ?numberOfProperties)
+WHERE { 
+    { ?property a owl:ObjectProperty }
+    UNION
+    { ?property a owl:DatatypeProperty }
+}
+
+## -----------------------------------------------------------------------------
+## -- 3. Number of instances for the main classes
+## -----------------------------------------------------------------------------
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT (COUNT(DISTINCT ?instance) AS ?numberOfInstances)
+WHERE { 
+    ?class a owl:Class.
+    ?instance a ?class
+}
+
+## -----------------------------------------------------------------------------
+## -- 4. Number of triples using the main properties
+## -----------------------------------------------------------------------------
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT (COUNT(?subject) AS ?numberOfTriples)
+WHERE {
+    { ?subject ?predicate ?object.
+      ?predicate a owl:ObjectProperty }
+    UNION
+    { ?subject ?predicate ?object.
+      ?predicate a owl:DatatypeProperty }
+}
